@@ -5,7 +5,7 @@ const FB_VER='10.12.2';
 // ===== DATA PAPAN =====
 // T: [pusatX,pusatY,atasX,atasY,lebar,tinggi] tiap kotak pada papan.webp (1672x941), urut dari Start searah jarum jam
 const IW=1672,IH=941;
-const T=[[831.1,768.4,830.9,748,308,181],[665.6,701.5,674.4,689.3,183,111],[582.6,651.2,592.6,640,174,103],[505,604.7,514.9,593.5,162,98],[432.9,560.5,443.1,550,166,95],[363.6,517.8,374,507.5,161,92],[296.6,477.3,307,467.6,159,88],[232.6,437.8,243.2,428.2,157,86],[150.4,376.7,151.6,364,201,114],[248.8,323.2,242.4,315.3,139,71],[322.1,290.7,315.5,282.8,139,70],[394.4,259.5,387.6,251.9,136,67],[464,229.2,457.3,221.9,133,64],[526.9,199.9,521.7,192.7,108,64],[599.1,173.4,591,166.4,132,62],[661.7,146.6,653.9,139.8,131,60],[724.8,120.4,716.9,113.7,131,59],[829.2,84.6,828.9,75.1,202,84],[932,121.5,939.1,114.9,127,59],[994.3,148.6,1001.1,141.8,126,61],[1057.9,176.5,1064.8,169.6,130,61],[1123.6,204.9,1130.4,197.7,132,62],[1191.4,234.5,1197.9,227.2,136,65],[1261.5,265.3,1267.7,257.8,136,68],[1333.4,296.7,1339.8,288.9,137,69],[1407.1,329.2,1413,321.3,140,72],[1509.7,381,1507.1,369,202,111],[1428.6,438.9,1416.9,429.2,163,85],[1363.6,477.7,1352,467.6,163,89],[1296.3,518.1,1285.2,508,166,92],[1227.1,560.3,1215.8,549.6,168,95],[1154.7,604.2,1143.8,593.3,170,99],[1078.6,650.6,1067.9,639.1,172,103],[995.9,701,986.7,689.1,182,110]];
+const T=[[831.1,768.4,830.9,748,308,181],[665.6,701.5,674.4,689.3,183,111],[582.6,651.2,592.6,640,174,103],[505,604.7,514.9,593.5,162,98],[432.9,560.5,443.1,550,166,95],[363.6,517.8,374,507.5,161,92],[296.6,477.3,307,467.6,159,88],[232.6,437.8,243.2,428.2,157,86],[150.4,376.7,151.6,364,201,114],[248.8,323.2,242.4,315.3,139,71],[322.1,290.7,315.5,282.8,139,70],[394.4,259.5,387.6,251.9,136,67],[464,229.2,457.3,221.9,133,64],[531.9,200.5,526.7,193.3,132,64],[599.1,173.4,591,166.4,132,62],[661.7,146.6,653.9,139.8,131,60],[724.8,120.4,716.9,113.7,131,59],[829.2,84.6,828.9,75.1,202,84],[932,121.5,939.1,114.9,127,59],[994.3,148.6,1001.1,141.8,126,61],[1057.9,176.5,1064.8,169.6,130,61],[1123.6,204.9,1130.4,197.7,132,62],[1191.4,234.5,1197.9,227.2,136,65],[1261.5,265.3,1267.7,257.8,136,68],[1333.4,296.7,1339.8,288.9,137,69],[1407.1,329.2,1413,321.3,140,72],[1509.7,381,1507.1,369,202,111],[1428.6,438.9,1416.9,429.2,163,85],[1363.6,477.7,1352,467.6,163,89],[1296.3,518.1,1285.2,508,166,92],[1227.1,560.3,1215.8,549.6,168,95],[1154.7,604.2,1143.8,593.3,170,99],[1078.6,650.6,1067.9,639.1,172,103],[995.9,701,986.7,689.1,182,110]];
 // A: [titikX,titikY,lebar/tinggi,lebarKoin/lebarGambar] titik pijak tiap gambar
 const A={"bidak-ippo":[.5,.793,.578,.993],"ippo-senang":[.5,.79,.703,.786],"ippo-kaget":[.498,.79,.76,.753],"ippo-sombong":[.549,.791,.688,.829],"ippo-nangis":[.547,.791,.713,.814],"ippo-mikir":[.55,.791,.675,.841],"ippo-menang":[.517,.791,.882,.649],"bidak-cemong":[.547,.799,.732,.853],"cemong-senang":[.551,.799,.718,.808],"cemong-kaget":[.564,.831,.805,.748],"cemong-sombong":[.542,.799,.797,.771],"cemong-nangis":[.587,.801,.76,.793],"cemong-mikir":[.592,.825,.765,.771],"cemong-menang":[.51,.808,.915,.664],"bidak-selen":[.525,.805,.664,.944],"selen-senang":[.504,.799,.66,.818],"selen-kaget":[.515,.794,.728,.77],"selen-sombong":[.5,.799,.75,.747],"selen-nangis":[.564,.809,.723,.844],"selen-mikir":[.566,.791,.735,.793],"selen-menang":[.503,.791,.843,.703],"bidak-jersey":[.551,.799,.732,.893],"jersey-senang":[.491,.791,.708,.784],"jersey-kaget":[.479,.792,.823,.708],"jersey-sombong":[.587,.791,.735,.82],"jersey-nangis":[.554,.791,.787,.784],"jersey-mikir":[.532,.792,.748,.776],"jersey-menang":[.513,.792,.863,.684],"rumah":[.497,.927,.865,1.0],"hotel":[.49,.929,.818,1.0]};
 const CH=['ippo','cemong','selen','jersey'],CC={ippo:'#E8638B',cemong:'#4C7BD9',selen:'#3FA36E',jersey:'#F5A524'};
@@ -29,14 +29,20 @@ function groupFull(s,g,id){return TILES.every((t,i)=>t.g!==g||t.t!=='prop'||owne
 function rent(s,i,dice){const t=TILES[i],o=s.own[i];if(!o)return 0;
  if(t.t==='air'){const n=TILES.filter((x,j)=>x.t==='air'&&ownerOf(s,j)===o.by).length;return n>1?100:50}
  if(t.t==='util'){const n=TILES.filter((x,j)=>x.t==='util'&&ownerOf(s,j)===o.by).length;return dice*(n>1?10:4)}
- const r=rentBase(t.p);return o.h?r*[1,5,15,40,55,70][o.h]:groupFull(s,t.g,o.by)?r*2:r}
-function wealth(s,id){let w=s.pl[id].cash;for(const i in s.own)if(s.own[i].by===id){const t=TILES[i];w+=t.p+(s.own[i].h||0)*(HC[t.g]||0)}return w}
-function canBuild(s,id){return TILES.map((t,i)=>i).filter(i=>{const t=TILES[i],o=s.own[i];return t.t==='prop'&&o&&o.by===id&&(o.h||0)<5&&groupFull(s,t.g,id)})}
+ const r=rentBase(t.p);return o.h?r*RM[o.h]:groupFull(s,t.g,o.by)?r*2:r}
+// tingkat bangunan (h): 0 tanah, 1 rumah, 2 gedung, 3 hotel, 4 landmark (aturan ala LINE Get Rich)
+const RM=[1,4,10,25,60],LVN=['Tanah','Rumah','Gedung','Hotel','Landmark'];
+const lvCost=(i,h)=>Math.round(HC[TILES[i].g]*[1,1.5,2,3][h]);
+const invest=(i,h)=>{let c=0;for(let k=0;k<h;k++)c+=lvCost(i,k);return c};
+function wealth(s,id){let w=s.pl[id].cash;for(const i in s.own)if(s.own[i].by===id)w+=TILES[i].p+invest(i,s.own[i].h||0);return w}
+// menang monopoli: kuasai satu deret sisi papan, atau 3 warna lengkap
+const SIDES=[[1,2,4,5,6],[9,10,11,12,13,14,15,16],[18,20,21,22,23,24,25],[27,28,30,31,32,33]];
+function monopoly(s,id){if(SIDES.some(L=>L.every(i=>ownerOf(s,i)===id)))return 'line';let g=0;for(let k=0;k<8;k++)if(groupFull(s,k,id))g++;return g>=3?'triple':null}
 function alive(s){return s.ord.filter(id=>!s.pl[id].out)}
 // bayar: jual rumah lalu tanah otomatis bila kurang; bila tetap kurang = bangkrut
 function pay(s,id,amt,to,ev){const p=s.pl[id];
  if(p.cash<amt){const mine=Object.keys(s.own).filter(i=>s.own[i].by===id).sort((a,b)=>TILES[b].p-TILES[a].p);
-  for(const i of mine){while(p.cash<amt&&s.own[i].h){s.own[i].h--;p.cash+=HC[TILES[i].g]/2}}
+  for(const i of mine){while(p.cash<amt&&s.own[i].h){s.own[i].h--;p.cash+=Math.floor(lvCost(i,s.own[i].h)/2)}}
   for(const i of mine){if(p.cash>=amt)break;if(!s.own[i].h){p.cash+=TILES[i].p/2;delete s.own[i]}}
   if(mine.length)ev.push({t:'sell',id})}
  if(p.cash<amt){if(to&&s.pl[to])s.pl[to].cash+=p.cash;p.cash=0;p.out=true;for(const i in s.own)if(s.own[i].by===id)delete s.own[i];ev.push({t:'bank',id});return false}
@@ -47,7 +53,8 @@ function moveBy(s,id,n,ev){const p=s.pl[id],path=[];let pos=p.pos;for(let k=0;k<
 function moveTo(s,id,to,ev){const p=s.pl[id];moveBy(s,id,(to-p.pos+N)%N||N,ev)}
 function land(s,id,dice,ev,depth=0){const p=s.pl[id],i=p.pos,t=TILES[i];
  if(BUYABLE.has(t.t)){const o=s.own[i];if(!o){s.ph='buy';s.pend=i;return}
-  if(o.by!==id&&!s.pl[o.by].out){const a=rent(s,i,dice);ev.push({t:'rent',id,to:o.by,a,i});pay(s,id,a,o.by,ev)}return}
+  if(o.by!==id&&!s.pl[o.by].out){const a=rent(s,i,dice);ev.push({t:'rent',id,to:o.by,a,i});pay(s,id,a,o.by,ev)}
+  else if(o.by===id&&t.t==='prop'&&(o.h||0)<4&&p.cash>=lvCost(i,o.h||0)){s.ph='build';s.pend=i}return}
  if(t.t==='gojail')return goJail(s,id,ev);
  if((t.t==='chance'||t.t==='fund')&&depth<2){const L=CARDS[t.t],c=L[Math.floor(Math.random()*L.length)];ev.push({t:'card',d:t.t,tx:c[0],a:typeof c[1]==='number'?c[1]:c[1]==='each'?c[2]:0});
   if(typeof c[1]==='number'){if(c[1]>0)p.cash+=c[1];else pay(s,id,-c[1],null,ev)}
@@ -59,25 +66,26 @@ function endTurn(s,dbl){const id=cur(s),p=s.pl[id];s.ph='roll';s.pend=-1;
  if(alive(s).length<2)return finish(s);
  if(dbl&&!p.out&&!p.jail&&p.dbl<2){p.dbl++;return}
  p.dbl=0;do{s.tn=(s.tn+1)%s.ord.length}while(s.pl[cur(s)].out)}
-function finish(s){s.status='end';s.rank=s.ord.map(id=>({id,w:s.pl[id].out?-1:wealth(s,id)})).sort((a,b)=>b.w-a.w)}
+function finish(s,win,why){s.status='end';s.rank=s.ord.map(id=>({id,w:s.pl[id].out?-1:wealth(s,id)})).sort((a,b)=>(b.id===win)-(a.id===win)||b.w-a.w);if(win)s.rank[0].why=why}
 // act: jalankan satu aksi pemain. Hasil: null = berhasil, teks = alasan ditolak
 function act(s,id,a){
  if(a.k==='time'){if(s.status==='play'&&Date.now()>=s.endsAt){finish(s);s.seq++;s.last={seq:s.seq,ev:[{t:'end'}]};return null}return 'Belum waktunya'}
  if(s.status!=='play')return 'Permainan belum jalan';
  const me=cur(s),ev=[];
- if(a.k==='skip'){if(id!==s.host||me===id)return 'Tidak bisa';if(s.ph==='buy')ev.push({t:'pass',id:me});endTurn(s,false)}
+ if(a.k==='skip'){if(id!==s.host||me===id)return 'Tidak bisa';if(s.ph!=='roll')ev.push({t:'pass',id:me});endTurn(s,false)}
  else{if(me!==id)return 'Bukan giliranmu';const p=s.pl[id];
  if(a.k==='roll'){if(s.ph!=='roll')return 'Tunggu dulu';const d=[r6(),r6()],dbl=d[0]===d[1];ev.push({t:'roll',id,d,pw:+a.pw||0});
   if(p.jail){if(dbl)p.jail=0;else if(p.jail>=3){pay(s,id,50,null,ev);p.jail=0;ev.push({t:'free',id})}else{p.jail++;ev.push({t:'stay',id});endTurn(s,false);return done(s,ev)}
-   moveBy(s,id,d[0]+d[1],ev);land(s,id,d[0]+d[1],ev);if(s.ph!=='buy')endTurn(s,false);else s.pdbl=false;return done(s,ev)}
+   moveBy(s,id,d[0]+d[1],ev);land(s,id,d[0]+d[1],ev);if(s.ph==='roll')endTurn(s,false);else s.pdbl=false;return done(s,ev)}
   if(dbl&&p.dbl>=2){goJail(s,id,ev);endTurn(s,false);return done(s,ev)}
   moveBy(s,id,d[0]+d[1],ev);if(!p.out)land(s,id,d[0]+d[1],ev);
-  if(s.ph==='buy'&&!p.out)s.pdbl=dbl;else endTurn(s,dbl&&p.pos!==JAIL)}
+  if(s.ph!=='roll'&&!p.out)s.pdbl=dbl;else endTurn(s,dbl&&p.pos!==JAIL)}
  else if(a.k==='buy'){if(s.ph!=='buy')return 'Tidak ada yang bisa dibeli';const i=s.pend,t=TILES[i];
-  if(a.y){if(p.cash<t.p)return 'Yep Coin-mu kurang';p.cash-=t.p;s.own[i]={by:id,h:0};ev.push({t:'buy',id,i})}else ev.push({t:'pass',id});
+  if(a.y){if(p.cash<t.p)return 'Yep Coin-mu kurang';p.cash-=t.p;s.own[i]={by:id,h:0};ev.push({t:'buy',id,i});const w=monopoly(s,id);if(w){finish(s,id,w);ev.push({t:'mono',id,w});return done(s,ev)}}else ev.push({t:'pass',id});
   endTurn(s,s.pdbl)}
- else if(a.k==='build'){const i=+a.i;if(!canBuild(s,id).includes(i))return 'Belum bisa dibangun di sini';const c=HC[TILES[i].g];if(p.cash<c)return 'Yep Coin-mu kurang';
-  p.cash-=c;s.own[i].h=(s.own[i].h||0)+1;ev.push({t:'build',id,i,h:s.own[i].h})}
+ else if(a.k==='build'){if(s.ph!=='build')return 'Tidak ada yang bisa dibangun';const i=s.pend,o=s.own[i];
+  if(a.y){const c=lvCost(i,o.h||0);if(p.cash<c)return 'Yep Coin-mu kurang';p.cash-=c;o.h=(o.h||0)+1;ev.push({t:'build',id,i,h:o.h})}else ev.push({t:'pass',id});
+  endTurn(s,s.pdbl)}
  else if(a.k==='bail'){if(!p.jail||s.ph!=='roll')return 'Kamu tidak di penjara';if(!pay(s,id,50,null,ev)){endTurn(s,false)}else{p.jail=0;ev.push({t:'free',id})}}
  else return 'Aksi tidak dikenal'}
  return done(s,ev)}
@@ -87,9 +95,9 @@ function startGame(s){if(s.status!=='lobby')return 'Sudah jalan';const ids=s.ord
  Object.assign(s,{status:'play',tn:0,ph:'roll',pend:-1,own:{},rank:null,endsAt:Date.now()+s.set.min*60000,seq:s.seq+1,last:{seq:s.seq+1,ev:[{t:'go'}]},ts:Date.now()});return null}
 // komputer: putuskan aksi berikutnya
 function botMove(s,id){const p=s.pl[id],jago=p.lvl==='jago';
- if(s.ph==='buy'){const t=TILES[s.pend],left=p.cash-t.p;return{k:'buy',y:jago?left>=50:left>=150&&Math.random()<.65}}
- const b=canBuild(s,id).sort((x,y)=>(s.own[x].h||0)-(s.own[y].h||0))[0];
- if(b!==undefined){const c=HC[TILES[b].g];if(jago?p.cash>c+150:p.cash>c+400&&Math.random()<.3)return{k:'build',i:b}}
+ if(s.ph==='buy'){const i=s.pend,t=TILES[i],left=p.cash-t.p;let win=null;if(left>=0){s.own[i]={by:id,h:0};win=monopoly(s,id);delete s.own[i]}
+  return{k:'buy',y:!!win||(jago?left>=50:left>=150&&Math.random()<.65)}}
+ if(s.ph==='build'){const c=lvCost(s.pend,s.own[s.pend].h||0);return{k:'build',y:jago?p.cash>c+150:p.cash>c+400&&Math.random()<.5}}
  if(p.jail&&p.cash>300&&jago)return{k:'bail'};return{k:'roll',pw:Math.random()}}
 /*ENGINE-END*/
 
@@ -121,23 +129,45 @@ function fit(){const lw=$('#left').offsetWidth+10,rw=$('#right').offsetWidth+10,
 const pct=(x,y)=>({left:x/IW*100+'%',top:y/IH*100+'%'});
 function spot(x,y,z){const e=el('div','at');Object.assign(e.style,pct(x,y));e.style.zIndex=z??Math.round(y);L.appendChild(e);return e}
 // gambar dengan titik pijak tepat di (x,y); ukuran ditentukan dari lebar koin/alas = w (piksel papan)
-function setSprite(box,key,w){const a=A[key];let im=box.firstChild;if(!im){im=el('img','sp');im.alt='';box.appendChild(im)}
+function setSprite(box,key,w){const a=A[key]||[.5,.9,1,.8];let im=box.firstChild;if(!im){im=el('img','sp');im.alt='';box.appendChild(im)}
  if(im.dataset.k!==key){im.src=img(key);im.dataset.k=key}const W=w/a[3];im.style.width=`calc(var(--bh)*${W/IH})`;im.style.height=`calc(var(--bh)*${W/a[2]/IH})`;im.style.setProperty('--ax',-a[0]*100+'%');im.style.setProperty('--ay',-a[1]*100+'%')}
 const tileSize=i=>Math.min(T[i][5],95);
 const lowPt=i=>{const t=T[i];return[t[0]-(t[2]-t[0])*.95,t[1]-(t[3]-t[1])*1.6]};
-let houseEl={},ownEl={};
-function buildBoard(){L.innerHTML='';houseEl={};ownEl={};
+let houseEl={},ownEl={},tgtEl=[];
+// nama negara: [geser-x, lebar muka kotak] diukur dari gambar papan supaya pas di tengah muka kotak
+const LB={1:[19,124],2:[26,115],4:[23,113],5:[23,106],6:[23,108],9:[-15,96],10:[-14,93],11:[-15,93],12:[-15,90],13:[-17,90],14:[-19,90],15:[-18,92],16:[-18,90],18:[16,88],20:[16,88],21:[15,91],22:[15,96],23:[14,96],24:[14,97],25:[14,99],27:[-25,109],28:[-24,107],30:[-24,112],31:[-24,114],32:[-23,118],33:[-19,125]};
+const TQ={"1": [682.4, 641.2, 764.0, 689.3, 648.4, 762.2, 569.3, 712.5], "2": [603.6, 594.9, 676.5, 637.8, 561.4, 707.5, 490.9, 663.2], "3": [528.5, 550.7, 598.2, 591.7, 483.4, 658.5, 416.0, 616.1], "4": [457.4, 508.8, 523.6, 547.8, 409.1, 611.8, 345.1, 571.5], "5": [389.1, 468.6, 452.9, 506.2, 338.6, 567.4, 277.0, 528.7], "6": [321.7, 428.9, 384.8, 466.1, 270.6, 524.7, 209.8, 486.4], "7": [259.8, 392.4, 322.9, 429.6, 208.6, 485.7, 147.8, 447.5], "9": [171.0, 311.9, 240.1, 283.2, 324.5, 333.5, 256.9, 363.1], "10": [246.1, 280.7, 314.5, 252.3, 399.0, 301.0, 332.0, 330.3], "11": [320.2, 249.9, 385.9, 222.6, 470.5, 269.8, 406.2, 297.9], "12": [391.2, 220.4, 455.1, 193.9, 539.8, 239.6, 477.3, 266.9], "13": [459.9, 191.9, 521.7, 166.3, 606.5, 210.5, 546.1, 236.8], "14": [525.9, 164.5, 585.5, 139.7, 670.6, 182.5, 612.3, 208.0], "15": [589.9, 137.9, 648.0, 113.8, 733.2, 155.2, 676.5, 179.9], "16": [652.2, 112.0, 709.6, 88.2, 795.1, 128.2, 739.0, 152.7], "18": [946.1, 90.1, 1003.4, 114.6, 917.7, 153.3, 861.4, 128.3], "19": [1007.4, 116.3, 1066.2, 141.5, 980.8, 181.4, 923.1, 155.7], "20": [1070.4, 143.3, 1130.3, 168.9, 1045.2, 210.0, 986.3, 183.9], "21": [1134.6, 170.8, 1196.5, 197.3, 1111.7, 239.6, 1050.9, 212.6], "22": [1201.1, 199.3, 1265.9, 227.0, 1181.2, 270.6, 1117.6, 242.3], "23": [1270.1, 228.8, 1336.7, 257.3, 1252.3, 302.2, 1186.9, 273.1], "24": [1341.6, 259.4, 1409.0, 288.2, 1324.8, 334.4, 1258.5, 304.9], "25": [1414.3, 290.5, 1484.5, 320.6, 1400.4, 368.1, 1331.4, 337.4], "27": [1339.3, 427.7, 1398.1, 393.0, 1516.5, 449.4, 1459.4, 484.9], "28": [1274.1, 466.1, 1334.6, 430.5, 1452.4, 489.2, 1393.7, 525.7], "29": [1206.2, 506.2, 1269.0, 469.2, 1386.4, 530.2, 1325.3, 568.2], "30": [1135.9, 547.6, 1200.9, 509.3, 1317.8, 572.8, 1254.6, 612.1], "31": [1062.1, 591.2, 1130.2, 551.0, 1246.7, 617.0, 1180.4, 658.2], "32": [984.5, 636.9, 1055.8, 594.9, 1172.1, 663.4, 1102.6, 706.5], "33": [897.2, 688.4, 978.0, 640.8, 1093.9, 711.9, 1015.3, 760.8]};
+function frame(){let h='';for(const k in TQ){const i=+k,t=TILES[i],q=TQ[k],[x0,y0,x1,y1,,,x3,y3]=q,W=Math.hypot(x1-x0,y1-y0),H=Math.hypot(x3-x0,y3-y0),
+  inUp=i<8||i>26,bh=H*.2,ins=W*.05,top=inUp?ins:H-ins-bh,mx=W/2,cy=inUp?H*.58:H*.42,fs=Math.min(W*.25,H*.17),nm=t.n==='Pabrik Snack'?'Snack':t.n,tl=Math.min(W*.88,nm.length*fs*.6);
+ h+=`<g transform="matrix(${(x1-x0)/W} ${(y1-y0)/W} ${(x3-x0)/H} ${(y3-y0)/H} ${x0} ${y0})">`;
+ if(BUYABLE.has(t.t)){const c=t.t==='prop'?GC[t.g]:'#2F5FC9';
+  h+=`<rect x="${ins}" y="${top}" width="${W-ins*2}" height="${bh}" rx="${bh*.25}" fill="${c}"/><rect x="${ins}" y="${top}" width="${W-ins*2}" height="${bh*.35}" rx="${bh*.2}" fill="#fff" opacity=".25"/>`;
+  h+=`<text class="tn" x="${mx}" y="${cy-fs*.35}" font-size="${fs}" textLength="${tl}" lengthAdjust="spacingAndGlyphs">${nm}</text><text class="tpz" x="${mx}" y="${cy+fs*.85}" font-size="${fs*.8}">${t.p} YC</text>`}
+ h+='</g>';
+ if(t.t==='chance'||t.t==='fund'){const cx=(q[0]+q[2]+q[4]+q[6])/4,cyy=(q[1]+q[3]+q[5]+q[7])/4,z=Math.min(W,H)*.75;h+=`<image href="${img(t.k)}" x="${cx-z/2}" y="${cyy-z/2}" width="${z}" height="${z}"/>`}}
+ const v=document.createElementNS('http://www.w3.org/2000/svg','svg');v.setAttribute('viewBox',`0 0 ${IW} ${IH}`);v.setAttribute('class','frame');v.innerHTML=h+`<image href="${img('tiang')}" x="457" y="164" width="152" height="75"/>`;L.appendChild(v)}
+function buildBoard(){L.innerHTML='';frame();houseEl={};ownEl={};
  TILES.forEach((t,i)=>{const [cx,cy,,,w,h]=T[i],sz=tileSize(i);
-  if(t.k){const e=spot(cx,cy,5);const im=el('img');im.src=img(t.k);im.alt='';const H=sz*.8;im.style.cssText=`height:calc(var(--bh)*${H/IH});--ax:-50%;--ay:-55%`;e.className='at ico';e.appendChild(im)}
-  if(['start','rest','jail','gojail'].includes(t.t)){const c=el('div','corner',t.t==='start'?'START<br>+200':t.t==='rest'?'ISTIRAHAT':t.t==='jail'?'':'MASUK<br>PENJARA');Object.assign(c.style,pct(cx,cy+(t.t==='jail'?h*.32:t.t==='gojail'?h*.3:0)));c.style.zIndex=6;L.appendChild(c)}
-  if(t.t==='prop'){const [lx,ly]=lowPt(i),d=el('div','gdot');Object.assign(d.style,pct(lx-w*.1,ly));d.style.cssText+=`;width:calc(var(--bh)*${sz*.32/IH});height:calc(var(--bh)*${sz*.15/IH});background:${GC[t.g]};border-width:1.5px;z-index:7`;L.appendChild(d)}
+  const lb=['prop','air','util'].includes(t.t);
+  if(t.k&&!lb&&!['chance','fund'].includes(t.t)){const e=spot(cx,t.t==='gojail'?cy-h*.06:cy,5);const im=el('img');im.src=img(t.k);im.alt='';const H=sz*(lb?.55:t.t==='gojail'?.55:.8);im.style.cssText=`height:calc(var(--bh)*${H/IH});--ax:-50%;--ay:${lb?-50:-55}%`;e.className='at ico';e.appendChild(im)}
+  if(['start','rest','jail','gojail'].includes(t.t)){const c=el('div','corner',t.t==='start'?'START<br>+200':t.t==='rest'?'ISTIRAHAT':t.t==='jail'?'':'MASUK<br>PENJARA');Object.assign(c.style,pct(cx,cy+(t.t==='jail'?h*.32:t.t==='gojail'?h*.27:0)));c.style.zIndex=6;if(t.t==='gojail')c.style.fontSize=`calc(var(--bh)*${h*.13/IH})`;L.appendChild(c)}
+
   const tp=el('div','tap');Object.assign(tp.style,pct(cx,cy));tp.style.cssText+=`;width:${w/IW*100}%;height:${h/IH*100}%;z-index:4`;tp.onclick=()=>!drag.moved&&tileInfo(i);L.appendChild(tp)})}
+// tanda tujuan: lingkaran emas berdenyut di kotak tempat bidak akan mendarat + angka dadu
+function showTarget(i,n){hideTarget();const [cx,cy,,,w,h]=T[i],a=spot(cx,cy,9),b=spot(cx,cy,400);a.classList.add('tg');b.classList.add('tg');
+ a.innerHTML=`<i class="tr" style="width:calc(var(--bh)*${w*.62/IH});height:calc(var(--bh)*${h*.5/IH})"></i>`;b.innerHTML=`<b class="tp">${n}</b>`;tgtEl=[a,b]}
+function hideTarget(){tgtEl.forEach(e=>e.remove());tgtEl=[]}
 function renderOwn(s){for(const i in ownEl){if(!s.own[i]||s.own[i].by!==ownEl[i].by){ownEl[i].e.remove();delete ownEl[i]}}
  for(const i in houseEl){const o=s.own[i];if(!o||!o.h){houseEl[i].remove();delete houseEl[i]}}
  for(const i in s.own){const o=s.own[i],p=s.pl[o.by];if(!p)continue;const sz=tileSize(i),w=T[i][4];
-  if(!ownEl[i]){const [lx,ly]=lowPt(i),d=el('div','own');Object.assign(d.style,pct(lx+w*.14,ly));d.style.cssText+=`;width:calc(var(--bh)*${sz*.4/IH});height:calc(var(--bh)*${sz*.4/IH});border-color:${CC[p.ch]};background-image:url(${img('bidak-'+p.ch)});z-index:8`;L.appendChild(d);ownEl[i]={e:d,by:o.by}}
-  if(o.h){let e=houseEl[i];if(!e){e=houseEl[i]=spot(T[i][2],T[i][3],Math.round(T[i][3])+1)}const k=o.h>=5?'hotel':'rumah';setSprite(e,k,sz*(k==='hotel'?.95:.82));
-   let c=e.querySelector('.hcount');if(o.h<5&&o.h>1){if(!c){c=el('div','hcount');e.appendChild(c)}c.textContent=o.h}else c&&c.remove()}}}
+  if(!ownEl[i]){const d=el('div','own'),[ox,oy,ow]=ownPt(i);Object.assign(d.style,pct(ox,oy));d.style.cssText+=`;width:calc(var(--bh)*${ow*.22/IH});height:calc(var(--bh)*${ow*.22/IH});border-color:${CC[p.ch]};background-image:url(${img('bidak-'+p.ch)});z-index:8`;L.appendChild(d);ownEl[i]={e:d,by:o.by}}
+  if(o.h){const [bx,by,bw]=bandPt(i);let e=houseEl[i];if(!e){e=houseEl[i]=spot(bx,by,Math.round(by)+20)}const [k,ph]=lvSprite(i,o.h);setSprite(e,k,bw*[0,.36,.42,.48,.52][o.h]);e.classList.toggle('lmk',o.h===4);
+   let c=e.querySelector('.hcount');if(ph&&o.h%2===0){if(!c){c=el('div','hcount');e.appendChild(c)}c.textContent=o.h===2?'G':'★'}else c&&c.remove()}}}
+// gambar bangunan; kalau gambar gedung/landmark belum ada, pakai pengganti (ph=1)
+const ASSET_OK=new Set();
+function ownPt(i){const [x0,y0,x1,y1,,,x3,y3]=TQ[i],f=i<8||i>26?.84:.16;return[x0+(x1-x0)*.84+(x3-x0)*f,y0+(y1-y0)*.84+(y3-y0)*f,Math.hypot(x1-x0,y1-y0)]}
+function bandPt(i){const [x0,y0,x1,y1,,,x3,y3]=TQ[i],f=i<8||i>26?.17:.83;return[(x0+x1)/2+(x3-x0)*f,(y0+y1)/2+(y3-y0)*f,Math.hypot(x1-x0,y1-y0)]}
+function lvSprite(i,h){if(h===4)return[TILES[i].k,0];const g=['','rumah','gedung','hotel'][h];return ASSET_OK.has(g)?[g,0]:[['','rumah','rumah','hotel'][h],1]}
 // bidak
 let pcEl={},disp={};
 function pieceXY(s,id,pos){const same=s.ord.filter(o=>!s.pl[o].out&&(disp[o]??s.pl[o].pos)===pos),k=same.indexOf(id),n=same.length,t=T[pos];
@@ -191,12 +221,12 @@ function onState(s){const prev=S;S=s;
  if(s.last&&s.last.seq>shownSeq){const ev=s.last.ev,seq=s.last.seq;shownSeq=seq;queue=queue.then(()=>play(ev)).then(()=>{renderAll();bot()})}
  else if(!animating)renderAll()}
 async function play(ev){animating=true;renderCtrl();
- try{for(const e of ev){const p=S.pl[e.id];
+ try{for(const [k,e] of ev.entries()){const p=S.pl[e.id];
   switch(e.t){
-  case 'roll':await rollDice(e.d,e.pw);break;
+  case 'roll':{await rollDice(e.d,e.pw);const m=ev.slice(k+1).find(x=>x.t==='mv'&&x.id===e.id);if(m){const t=m.path[m.path.length-1];showTarget(t,e.d[0]+e.d[1]);camFocus(T[t][0],T[t][1],1.3);await wait(1100)}break}
   case 'mv':{hideDice();const t=e.path[e.path.length-1];camFocus(T[t][0],T[t][1],1.5);
    for(const pos of e.path){disp[e.id]=pos;const pc=pcEl[e.id];placePiece(S,e.id,pos,e.jump?'kaget':'senang');if(pc){pc.classList.remove('hop');void pc.offsetWidth;pc.classList.add('hop')}snd('tuk');await wait(e.jump?420:260)}
-   placePiece(S,e.id,disp[e.id]);await wait(150);break}
+   hideTarget();placePiece(S,e.id,disp[e.id]);await wait(150);break}
   case 'start':snd('koin');coins(10);banner(`${nameOf(e.id)} +200 YC`);await wait(700);break;
   case 'rent':snd('aduh');expr(S,e.id,'kaget',1800);expr(S,e.to,'sombong',1800);banner(`Bayar sewa ${fmt(e.a)} YC`,1);await wait(1500);break;
   case 'card':snd('kartu');await cardPop(e);break;
@@ -205,13 +235,14 @@ async function play(ev){animating=true;renderCtrl();
   case 'free':banner('Bebas dari penjara!');expr(S,e.id,'senang');await wait(900);break;
   case 'buy':snd('ting');coins(12);banner(`${TILES[e.i].n} jadi milik ${nameOf(e.id)}!`);expr(S,e.id,'senang');await wait(1200);break;
   case 'pass':hideDice();break;
-  case 'build':snd('bangun');banner(e.h>=5?'Hotel berdiri!':'Rumah baru!');renderOwn(S);await wait(900);break;
+  case 'build':snd('bangun');banner(['','Rumah baru!','Gedung berdiri!','Hotel berdiri!','Landmark jadi!'][e.h]);if(e.h>3)coins(14);renderOwn(S);await wait(e.h>3?1500:900);break;
+  case 'mono':snd('yey');coins(30);banner(`${nameOf(e.id)} menang! ${e.w==='line'?'Satu deret dikuasai':'3 warna lengkap'}`);await wait(2200);break;
   case 'sell':banner(`${nameOf(e.id)} jual aset buat bayar`,1);await wait(1100);break;
   case 'bank':snd('boom');shake();flash();banner(`${nameOf(e.id)} BANGKRUT!`,1);expr(S,e.id,'nangis',2500);await wait(2000);break;
   case 'go':banner('Berangkat!');snd('yey');break;
   case 'end':break}}
  }catch(err){console.error(err)}
- hideDice();for(const id of S.ord)disp[id]=S.pl[id]?.pos;setTimeout(camReset,250);animating=false;if(S.status==='end')endScreen()}
+ hideDice();hideTarget();for(const id of S.ord)disp[id]=S.pl[id]?.pos;setTimeout(camReset,250);animating=false;if(S.status==='end')endScreen()}
 
 function renderAll(){if(!S||S.status==='lobby')return;renderOwn(S);renderPieces(S);renderSide();renderCtrl()}
 function renderSide(){const box=$('#left');box.innerHTML='';
@@ -225,7 +256,7 @@ function renderCtrl(){const c=$('#ctrl');clearInterval(powT);c.innerHTML='';clos
  if(!mine){const w=el('div','panel wait');w.innerHTML=`<img src="${img(p.ch+'-mikir')}" alt=""><b></b>`;w.querySelector('b').textContent=`Giliran ${p.nm}…`;c.appendChild(w);
   if(MODE==='online'&&S.host===ME&&Date.now()-S.ts>40000){const k=el('button','btn r sm','Lewati giliran');k.onclick=()=>busy(k,'Sedang melewati giliran…',()=>send({k:'skip'}));c.appendChild(k)}return}
  if(S.ph==='buy')return buyCard();
- const bl=canBuild(S,ME);if(bl.length){const k=el('button','btn g sm','Bangun rumah');k.onclick=buildList;c.appendChild(k)}
+ if(S.ph==='build')return buildCard();
  if(p.jail){const k=el('button','btn b sm','Bayar 50 YC, bebas');k.onclick=()=>busy(k,'Sedang membayar…',()=>send({k:'bail'}));c.appendChild(k)}
  const bar=el('div','power','<i></i>'),i=bar.firstChild,btn=el('button','btn y btnStop','STOP!');let v=0,dir=1;
  powT=setInterval(()=>{v+=dir*4;if(v>=100||v<=0)dir*=-1;i.style.width=v+'%'},30);
@@ -237,21 +268,21 @@ function openModal(html,tag){const m=$('#modal'),b=$('#mbox');b.innerHTML=html;b
 function closeModal(tag){const m=$('#modal');if(!tag||$('#mbox').dataset.tag===tag)m.classList.remove('on')}
 $('#modal').onclick=e=>{if(e.target.id==='modal'&&$('#mbox').dataset.tag!=='buy')closeModal()};
 function tileInfo(i){const t=TILES[i],o=S?.own?.[i];let rows='';
- if(t.t==='prop'){const r=rentBase(t.p);rows=`<table class="tbl"><tr><td>Sewa tanah</td><td>${r} YC</td></tr><tr><td>Satu warna lengkap</td><td>${r*2} YC</td></tr>${[1,2,3,4].map(h=>`<tr><td>${h} rumah</td><td>${fmt(r*[1,5,15,40,55][h])} YC</td></tr>`).join('')}<tr><td>Hotel</td><td>${fmt(r*70)} YC</td></tr><tr><td>Biaya bangun</td><td>${HC[t.g]} YC</td></tr></table>`}
+ if(t.t==='prop'){const r=rentBase(t.p);rows=`<table class="tbl"><tr><td>Sewa tanah</td><td>${r} YC</td></tr><tr><td>Satu warna lengkap</td><td>${r*2} YC</td></tr>${[1,2,3,4].map(h=>`<tr><td>${LVN[h]} (${lvCost(i,h-1)} YC)</td><td>${fmt(r*RM[h])} YC</td></tr>`).join('')}</table>`}
  else if(t.t==='air')rows='<p>Sewa 50 YC, kalau punya 2 bandara jadi 100 YC</p>';else if(t.t==='util')rows='<p>Sewa = angka dadu × 4, kalau punya Wifi & Pabrik Snack jadi × 10</p>';
  else rows={start:'<p>Lewat sini dapat 200 YC</p>',jail:'<p>Cuma mampir, aman</p>',rest:'<p>Santai dulu, tidak terjadi apa-apa</p>',gojail:'<p>Berhenti di sini = masuk penjara!</p>',chance:'<p>Ambil kartu Kesempatan</p>',fund:'<p>Ambil kartu Dana Umum</p>'}[t.t];
- const own=o&&S.pl[o.by]?`<p>Milik <b>${esc(S.pl[o.by].nm)}</b>${o.h?` · ${o.h>=5?'hotel':o.h+' rumah'}`:''}</p>`:t.p?`<p>Harga ${t.p} YC · belum ada pemiliknya</p>`:'';
+ const own=o&&S.pl[o.by]?`<p>Milik <b>${esc(S.pl[o.by].nm)}</b>${o.h?` · ${LVN[o.h].toLowerCase()}`:''}</p>`:t.p?`<p>Harga ${t.p} YC · belum ada pemiliknya</p>`:'';
  openModal(`<div class="mhead" style="background:${t.t==='prop'?GC[t.g]:'#2F5FC9'}">${t.t==='prop'?'NEGARA':'PETAK'}</div><div class="mbody">${t.k?`<img class="big" src="${img(t.k)}" alt="">`:''}<h3>${esc(t.n)}</h3>${own}${rows}<button class="btn b sm" id="mx">Tutup</button></div>`);$('#mx').onclick=()=>closeModal()}
 function buyCard(){const i=S.pend,t=TILES[i],p=S.pl[ME],ok=p.cash>=t.p;expr(S,ME,'mikir',60000);
  const b=openModal(`<div class="mhead" style="background:linear-gradient(180deg,#3FA36E,#2A7D52)">VISA DISETUJUI</div><img class="stamp" src="${img('cap')}" alt=""><div class="mbody"><img class="big" src="${img(t.k)}" alt=""><h3>${esc(t.n)}</h3><p>Harga ${t.p} YC · Yep Coin-mu ${fmt(p.cash)} YC</p>${ok?'':'<p><b>Yep Coin-mu belum cukup</b></p>'}<div class="row"><button class="btn b" id="bNo">Lewati</button><button class="btn y" id="bYes"${ok?'':' disabled'}>Beli Tanah!</button></div></div>`,'buy');
  b.querySelector('#bYes').onclick=e=>busy(e.target,'Sedang membeli tanah…',()=>send({k:'buy',y:true}));b.querySelector('#bNo').onclick=e=>busy(e.target,null,()=>send({k:'buy',y:false}))}
-function buildList(){const L2=canBuild(S,ME);
- const b=openModal(`<div class="mhead" style="background:#2A7D52">BANGUN</div><div class="mbody"><div class="blist">${L2.map(i=>{const t=TILES[i],h=S.own[i].h||0;return`<div class="bitem"><img src="${img(t.k)}" alt=""><div><b>${esc(t.n)}</b><br>${h?h+' rumah':'kosong'} → ${h>=4?'hotel':h+1+' rumah'}</div><button class="btn y sm" data-i="${i}">${HC[t.g]} YC</button></div>`}).join('')}</div><button class="btn b sm" id="mx">Selesai</button></div>`);
- b.querySelectorAll('[data-i]').forEach(x=>x.onclick=()=>busy(x,'Sedang membangun…',async()=>{await send({k:'build',i:+x.dataset.i});closeModal();}));$('#mx').onclick=()=>closeModal()}
+function buildCard(){const i=S.pend,t=TILES[i],h=S.own[i].h||0,c=lvCost(i,h),p=S.pl[ME],ok=p.cash>=c;expr(S,ME,'mikir',60000);
+ const b=openModal(`<div class="mhead" style="background:linear-gradient(180deg,#3FA36E,#2A7D52)">BANGUN</div><div class="mbody"><img class="big" src="${img(t.k)}" alt=""><h3>${esc(t.n)}</h3><p>${LVN[h]} → <b>${LVN[h+1]}</b> · ${c} YC</p><p>Sewa jadi ${fmt(rentBase(t.p)*RM[h+1])} YC · Yep Coin-mu ${fmt(p.cash)} YC</p><div class="row"><button class="btn b" id="bNo">Lewati</button><button class="btn y" id="bYes"${ok?'':' disabled'}>Bangun ${LVN[h+1]}!</button></div></div>`,'buy');
+ b.querySelector('#bYes').onclick=e=>busy(e.target,'Sedang membangun…',()=>send({k:'build',y:true}));b.querySelector('#bNo').onclick=e=>busy(e.target,null,()=>send({k:'build',y:false}))}
 async function cardPop(e){const ch=e.d==='chance';openModal(`<div class="mhead" style="background:${ch?'#E0664F':'#1C2B4D'}">${ch?'KESEMPATAN':'DANA UMUM'}</div><div class="mbody"><img class="big" src="${img(ch?'kartu-kesempatan':'kartu-dana')}" alt=""><p style="font-size:17px;color:#2A2010"><b>${esc(e.tx)}</b></p>${e.a?`<h3>${e.a>0?'+':''}${e.a} YC</h3>`:''}</div>`,'card');
  if(e.a>0)coins(8);await wait(2600);closeModal('card')}
 function endScreen(){closeModal();const r=S.rank||[],win=S.pl[r[0]?.id];snd('yey');coins(24);
- const b=openModal(`<div class="mhead" style="background:linear-gradient(180deg,#F5B82E,#C98A10)">JUARA KELILING DUNIA</div><div class="mbody">${win?`<img class="big" src="${img(win.ch+'-menang')}" alt=""><h3>${esc(win.nm)}</h3>`:''}<div class="rank">${r.map(({id,w},k)=>`<div><span>${k+1}. ${esc(S.pl[id]?.nm||'')}</span><span>${w<0?'bangkrut':fmt(w)+' YC'}</span></div>`).join('')}</div><div class="row"><button class="btn b sm" id="eHome">Ke Menu</button>${MODE==='solo'||S.host===ME?'<button class="btn y sm" id="eAgain">Main Lagi</button>':''}</div></div>`,'end');
+ const b=openModal(`<div class="mhead" style="background:linear-gradient(180deg,#F5B82E,#C98A10)">JUARA KELILING DUNIA</div><div class="mbody">${win?`<img class="big" src="${img(win.ch+'-menang')}" alt=""><h3>${esc(win.nm)}</h3>${r[0].why?`<p><b>Menang monopoli: ${r[0].why==='line'?'satu deret dikuasai':'3 warna lengkap'}</b></p>`:''}`:''}<div class="rank">${r.map(({id,w},k)=>`<div><span>${k+1}. ${esc(S.pl[id]?.nm||'')}</span><span>${w<0?'bangkrut':fmt(w)+' YC'}</span></div>`).join('')}</div><div class="row"><button class="btn b sm" id="eHome">Ke Menu</button>${MODE==='solo'||S.host===ME?'<button class="btn y sm" id="eAgain">Main Lagi</button>':''}</div></div>`,'end');
  b.querySelector('#eHome').onclick=leave;const a=b.querySelector('#eAgain');if(a)a.onclick=()=>busy(a,'Sedang menyiapkan…',again)}
 
 // ===== WAKTU =====
@@ -267,7 +298,7 @@ function solo(){MODE='solo';ME='me';const s=newState({mode:'solo',host:'me'});s.
 function soloBots(){const s=S;for(const id of Object.keys(s.pl))if(id!=='me')delete s.pl[id];s.ord=['me'];
  const left=CH.filter(c=>c!==s.pl.me.ch);for(let k=0;k<s.set.bots;k++){const id='bot'+k;s.pl[id]={nm:'Komputer '+(k+1),ch:left[k],bot:1,lvl:s.set.lvl};s.ord.push(id)}}
 let botT;function bot(){clearTimeout(botT);if(MODE!=='solo'||!S||S.status!=='play'||animating)return;const id=cur(S);if(!S.pl[id].bot)return;
- botT=setTimeout(()=>{if(animating||cur(S)!==id)return;const a=botMove(S,id);send(a,id).catch(()=>{})},S.ph==='buy'?1100:900)}
+ botT=setTimeout(()=>{if(animating||cur(S)!==id)return;const a=botMove(S,id);send(a,id).catch(()=>{})},S.ph!=='roll'?1100:900)}
 
 // ===== MAIN BARENG (Firebase) =====
 async function fbInit(){if(net)return net;if(!CONFIG.firebase.apiKey)throw fail('Main Bareng belum disiapkan (isi CONFIG Firebase dulu). Main Sendiri tetap bisa.');
