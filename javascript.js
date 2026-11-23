@@ -69,13 +69,13 @@ function endTurn(s,dbl){const id=cur(s),p=s.pl[id];s.ph='roll';s.pend=-1;
 function finish(s,win,why){s.status='end';s.rank=s.ord.map(id=>({id,w:s.pl[id].out?-1:wealth(s,id)})).sort((a,b)=>(b.id===win)-(a.id===win)||b.w-a.w);if(win)s.rank[0].why=why}
 // act: jalankan satu aksi pemain. Hasil: null = berhasil, teks = alasan ditolak
 function act(s,id,a){
- if(a.k==='time'){if(s.status==='play'&&Date.now()>=s.endsAt){finish(s);s.seq++;s.last={seq:s.seq,ev:[{t:'end'}]};return null}return 'Belum waktunya'}
+ if(a.k==='time'){if(s.status==='play'&&Date.now()>=s.endsAt){finish(s);s.seq++;logEv(s,[{t:'end'}]);return null}return 'Belum waktunya'}
  if(s.status!=='play')return 'Permainan belum jalan';
  const me=cur(s),ev=[];
  if(a.k==='skip'){if(id!==s.host||me===id)return 'Tidak bisa';if(s.ph!=='roll')ev.push({t:'pass',id:me});endTurn(s,false)}
  else{if(me!==id)return 'Bukan giliranmu';const p=s.pl[id];
  if(a.k==='roll'){if(s.ph!=='roll')return 'Tunggu dulu';const d=[r6(),r6()],dbl=d[0]===d[1];ev.push({t:'roll',id,d,pw:+a.pw||0});
-  if(p.jail){if(dbl)p.jail=0;else if(p.jail>=3){pay(s,id,50,null,ev);p.jail=0;ev.push({t:'free',id})}else{p.jail++;ev.push({t:'stay',id});endTurn(s,false);return done(s,ev)}
+  if(p.jail){if(dbl||p.jail>=2){p.jail=0;ev.push({t:'free',id})}else{p.jail++;ev.push({t:'stay',id});endTurn(s,false);return done(s,ev)}
    moveBy(s,id,d[0]+d[1],ev);land(s,id,d[0]+d[1],ev);if(s.ph==='roll')endTurn(s,false);else s.pdbl=false;return done(s,ev)}
   if(dbl&&p.dbl>=2){goJail(s,id,ev);endTurn(s,false);return done(s,ev)}
   moveBy(s,id,d[0]+d[1],ev);if(!p.out)land(s,id,d[0]+d[1],ev);
@@ -86,26 +86,27 @@ function act(s,id,a){
  else if(a.k==='build'){if(s.ph!=='build')return 'Tidak ada yang bisa dibangun';const i=s.pend,o=s.own[i];
   if(a.y){const c=lvCost(i,o.h||0);if(p.cash<c)return 'Yep Coin-mu kurang';p.cash-=c;o.h=(o.h||0)+1;ev.push({t:'build',id,i,h:o.h})}else ev.push({t:'pass',id});
   endTurn(s,s.pdbl)}
- else if(a.k==='bail'){if(!p.jail||s.ph!=='roll')return 'Kamu tidak di penjara';if(!pay(s,id,50,null,ev)){endTurn(s,false)}else{p.jail=0;ev.push({t:'free',id})}}
+
  else return 'Aksi tidak dikenal'}
  return done(s,ev)}
-function done(s,ev){s.seq++;s.ts=Date.now();if(s.status==='play'&&alive(s).length<2)finish(s);if(s.status==='end')ev.push({t:'end'});s.last={seq:s.seq,ev};return null}
+function done(s,ev){s.seq++;s.ts=Date.now();if(s.status==='play'&&alive(s).length<2)finish(s);if(s.status==='end')ev.push({t:'end'});logEv(s,ev);return null}
+function logEv(s,ev){s.last=[...(Array.isArray(s.last)?s.last:[]),{seq:s.seq,ev}].slice(-8)}
 function startGame(s){if(s.status!=='lobby')return 'Sudah jalan';const ids=s.ord.filter(id=>s.pl[id].ch);if(ids.length<2)return 'Minimal 2 pemain yang sudah pilih bidak';
  s.ord=ids;for(const id in s.pl){if(!s.pl[id].ch){delete s.pl[id];continue}Object.assign(s.pl[id],{cash:s.set.cash,pos:0,jail:0,dbl:0,out:false})}
- Object.assign(s,{status:'play',tn:0,ph:'roll',pend:-1,own:{},rank:null,endsAt:Date.now()+s.set.min*60000,seq:s.seq+1,last:{seq:s.seq+1,ev:[{t:'go'}]},ts:Date.now()});return null}
+ Object.assign(s,{status:'play',tn:0,ph:'roll',pend:-1,own:{},rank:null,endsAt:Date.now()+s.set.min*60000,seq:s.seq+1,last:[{seq:s.seq+1,ev:[{t:'go'}]}],ts:Date.now()});return null}
 // komputer: putuskan aksi berikutnya
 function botMove(s,id){const p=s.pl[id],jago=p.lvl==='jago';
  if(s.ph==='buy'){const i=s.pend,t=TILES[i],left=p.cash-t.p;let win=null;if(left>=0){s.own[i]={by:id,h:0};win=monopoly(s,id);delete s.own[i]}
   return{k:'buy',y:!!win||(jago?left>=50:left>=150&&Math.random()<.65)}}
  if(s.ph==='build'){const c=lvCost(s.pend,s.own[s.pend].h||0);return{k:'build',y:jago?p.cash>c+150:p.cash>c+400&&Math.random()<.5}}
- if(p.jail&&p.cash>300&&jago)return{k:'bail'};return{k:'roll',pw:Math.random()}}
+ return{k:'roll',pw:Math.random()}}
 /*ENGINE-END*/
 
 // ===== ALAT BANTU TAMPILAN =====
 const $=q=>document.querySelector(q),el=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('id-ID');
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const wait=ms=>new Promise(r=>setTimeout(r,FAST?ms*.3:ms));
 const img=k=>`./assets/${k}.webp`;
 let toastT;function toast(t,err){const e=$('#toast');e.textContent=t;e.className='on'+(err?' err':'');clearTimeout(toastT);toastT=setTimeout(()=>e.className='',err?3200:2200)}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
@@ -211,6 +212,7 @@ async function rollDice(d,pw){const box=$('#dice'),ds=box.querySelectorAll('.die
 const hideDice=()=>$('#dice').classList.remove('on');
 
 // ===== KEADAAN APLIKASI =====
+let FAST=false,backlog=0;
 let S=null,ME=null,MODE=null,shownSeq=0,animating=false,queue=Promise.resolve(),net=null,unsub=null,roomCode='';
 const nameOf=id=>S.pl[id]?.nm||'Pemain';
 
@@ -218,7 +220,9 @@ const nameOf=id=>S.pl[id]?.nm||'Pemain';
 function onState(s){const prev=S;S=s;
  if(s.status==='lobby'){shownSeq=s.seq;disp={};return renderLobby()}
  if(!$('#game').classList.contains('on')){show('game');buildBoard();fit();disp={};for(const id of s.ord)disp[id]=s.pl[id].pos;shownSeq=s.seq;renderAll();tick();bot();return}
- if(s.last&&s.last.seq>shownSeq){const ev=s.last.ev,seq=s.last.seq;shownSeq=seq;queue=queue.then(()=>play(ev)).then(()=>{renderAll();bot()})}
+ const L=Array.isArray(s.last)?s.last:s.last?[s.last]:[],nw=L.filter(x=>x.seq>shownSeq);
+ if(nw.length){if(nw[0].seq>shownSeq+1&&shownSeq)toast('Menyusul permainan…');shownSeq=nw[nw.length-1].seq;
+  for(const x of nw){backlog++;queue=queue.then(()=>{FAST=backlog>1;return play(x.ev)}).then(()=>backlog--)}queue=queue.then(()=>{FAST=false;renderAll();bot()})}
  else if(!animating)renderAll()}
 async function play(ev){animating=true;renderCtrl();
  try{for(const [k,e] of ev.entries()){const p=S.pl[e.id];
@@ -257,11 +261,11 @@ function renderCtrl(){const c=$('#ctrl');clearInterval(powT);c.innerHTML='';clos
   if(MODE==='online'&&S.host===ME&&Date.now()-S.ts>40000){const k=el('button','btn r sm','Lewati giliran');k.onclick=()=>busy(k,'Sedang melewati giliran…',()=>send({k:'skip'}));c.appendChild(k)}return}
  if(S.ph==='buy')return buyCard();
  if(S.ph==='build')return buildCard();
- if(p.jail){const k=el('button','btn b sm','Bayar 50 YC, bebas');k.onclick=()=>busy(k,'Sedang membayar…',()=>send({k:'bail'}));c.appendChild(k)}
+
  const bar=el('div','power','<i></i>'),i=bar.firstChild,btn=el('button','btn y btnStop','STOP!');let v=0,dir=1;
  powT=setInterval(()=>{v+=dir*4;if(v>=100||v<=0)dir*=-1;i.style.width=v+'%'},30);
  btn.onclick=()=>{clearInterval(powT);busy(btn,null,()=>send({k:'roll',pw:v/100}))};
- const hint=el('div','panel wait',p.jail?'Kamu di penjara: dadu kembar = bebas':'Giliranmu! Tekan STOP');c.append(hint,bar,btn)}
+ const hint=el('div','panel wait',p.jail?(p.jail>=2?'Giliran ini kamu bebas dari penjara':'Di penjara: dadu kembar = bebas, kalau tidak tunggu 1 giliran'):'Giliranmu! Tekan STOP');c.append(hint,bar,btn)}
 
 // ===== KARTU & JENDELA =====
 function openModal(html,tag){const m=$('#modal'),b=$('#mbox');b.innerHTML=html;b.dataset.tag=tag||'';m.classList.add('on');return b}
