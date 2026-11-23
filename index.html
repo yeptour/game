@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Yep Tour</title>
+<meta name="theme-color" content="#1C2B4D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Yep Tour">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://www.gstatic.com wss://*.firebaseio.com; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; manifest-src 'self'; frame-src https://yep-tour.firebaseapp.com">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./assets/icon-192.png">
+<link rel="apple-touch-icon" href="./assets/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="./stylesheet.css">
+</head>
+<body>
+<div id="rotate"><img src="./assets/bidak-ippo.webp" alt=""><p>Miringkan HP-mu dulu ya</p></div>
+
+<!-- LAYAR PEMBUKA -->
+<section id="home" class="screen on">
+  <img class="bg" src="./assets/latar.webp" alt="">
+  <div class="shade"></div>
+  <div class="homebox">
+    <div class="tag">KELILING DUNIA BARENG</div>
+    <h1 class="title">Yep Tour</h1>
+    <label class="lbl">Nama kamu<input id="nama" maxlength="12" autocomplete="off" placeholder="Tulis namamu"></label>
+    <div class="row"><button class="btn y" id="bBareng">Main Bareng</button><button class="btn b" id="bSendiri">Main Sendiri</button></div>
+    <div class="row"><input id="kode" inputmode="numeric" maxlength="4" placeholder="Kode room teman" aria-label="Kode room"><button class="btn b sm" id="bMasuk">Masuk</button></div>
+    <button class="link" id="bPasang">Cara pasang di HP</button>
+  </div>
+</section>
+
+<!-- RUANG TUNGGU -->
+<section id="lobby" class="screen">
+  <div class="lobL">
+    <div class="lobHead"><h2 class="t">Pilih teman jalanmu</h2><div class="panel kodebox" id="kodeBox"><small>KODE ROOM</small><b id="kodeTxt">----</b></div></div>
+    <div id="picks" class="picks"></div>
+  </div>
+  <div class="panel lobR">
+    <h3>Atur Perjalanan</h3>
+    <div class="opt"><span>Lama main</span><div id="oMin" class="pills"></div></div>
+    <div class="opt"><span>Uang awal</span><div id="oCash" class="pills"></div></div>
+    <div class="opt solo"><span>Lawan</span><div id="oBots" class="pills"></div></div>
+    <div class="opt solo"><span>Tingkat</span><div id="oLvl" class="pills"></div></div>
+    <div id="penumpang" class="small"></div>
+    <div class="row mt"><button class="btn b sm" id="bBatal">Keluar</button><button class="btn y grow" id="bBerangkat">Berangkat!</button></div>
+  </div>
+</section>
+
+<!-- PERMAINAN -->
+<section id="game" class="screen">
+  <div id="view"><div id="cam"><div id="board"><img id="boardImg" src="./assets/papan.webp" alt="Papan"><div id="layer"></div><div id="dice"><i class="die"></i><i class="die"></i></div></div></div></div>
+  <div id="left" class="side"></div>
+  <div id="right" class="side">
+    <div class="panel timer"><small>SISA WAKTU</small><b id="timer">--:--</b></div>
+    <div id="ctrl"></div>
+  </div>
+  <button class="btn round" id="bMenu" aria-label="Menu">☰</button>
+  <button class="btn round" id="bReset" aria-label="Lihat papan penuh">⤢</button>
+  <div id="fx"></div>
+</section>
+
+<div id="modal" class="modal"><div class="panel mbox" id="mbox"></div></div>
+<div id="toast"></div>
+
+<script type="module" src="./javascript.js"></script>
+</body>
+</html>
