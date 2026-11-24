@@ -22,17 +22,18 @@ fund:[['Tabungan jajan cair',100],['Ulang tahun! Semua pemain kasih kado','each'
 // ===== MESIN PERMAINAN (sama untuk main sendiri & main bareng) =====
 const r6=()=>1+Math.floor(Math.random()*6);
 const rentBase=p=>Math.max(2,Math.round(p*.07));
-function newState(o){return{v:1,mode:o.mode,status:'lobby',host:o.host,set:{min:45,cash:1500,bots:3,lvl:'santai'},pl:{},ord:[],tn:0,ph:'roll',pend:-1,pdbl:false,own:{},seq:0,last:null,endsAt:0,rank:null,ts:Date.now()}}
+const VER=10;// naikkan tiap aturan berubah; semua HP dalam satu room wajib versi sama
+function newState(o){return{v:VER,mode:o.mode,status:'lobby',host:o.host,set:{min:45,cash:1500,bots:3,lvl:'santai'},pl:{},ord:[],tn:0,ph:'roll',pend:-1,pdbl:false,own:{},seq:0,last:null,endsAt:0,rank:null,ts:Date.now()}}
 const cur=s=>s.ord[s.tn];
 const ownerOf=(s,i)=>s.own[i]&&s.own[i].by;
 function groupFull(s,g,id){return TILES.every((t,i)=>t.g!==g||t.t!=='prop'||ownerOf(s,i)===id)}
 function rent(s,i,dice){const t=TILES[i],o=s.own[i];if(!o)return 0;
  if(t.t==='air'){const n=TILES.filter((x,j)=>x.t==='air'&&ownerOf(s,j)===o.by).length;return n>1?100:50}
  if(t.t==='util'){const n=TILES.filter((x,j)=>x.t==='util'&&ownerOf(s,j)===o.by).length;return dice*(n>1?10:4)}
- const r=rentBase(t.p);return o.h?r*RM[o.h]:groupFull(s,t.g,o.by)?r*2:r}
+ const r=rentBase(t.p);return r*RM[o.h||0]*(groupFull(s,t.g,o.by)?2:1)}
 // tingkat bangunan (h): 0 tanah, 1 rumah, 2 gedung, 3 hotel, 4 landmark (aturan ala LINE Get Rich)
-const RM=[1,4,10,25,60],LVN=['Tanah','Rumah','Gedung','Hotel','Landmark'];
-const lvCost=(i,h)=>Math.round(HC[TILES[i].g]*[1,1.5,2,3][h]);
+const RM=[1,4,10,25],LVN=['Tanah','Rumah','Gedung','Landmark'];
+const lvCost=(i,h)=>Math.round(HC[TILES[i].g]*[1,1.5,2.5][h]);
 const invest=(i,h)=>{let c=0;for(let k=0;k<h;k++)c+=lvCost(i,k);return c};
 function wealth(s,id){let w=s.pl[id].cash;for(const i in s.own)if(s.own[i].by===id)w+=TILES[i].p+invest(i,s.own[i].h||0);return w}
 // menang monopoli: kuasai satu deret sisi papan, atau 3 warna lengkap
@@ -48,13 +49,13 @@ function pay(s,id,amt,to,ev){const p=s.pl[id];
  if(p.cash<amt){if(to&&s.pl[to])s.pl[to].cash+=p.cash;p.cash=0;p.out=true;for(const i in s.own)if(s.own[i].by===id)delete s.own[i];ev.push({t:'bank',id});return false}
  p.cash-=amt;if(to&&s.pl[to])s.pl[to].cash+=amt;return true}
 function goJail(s,id,ev){const p=s.pl[id];p.pos=JAIL;p.jail=1;p.dbl=0;ev.push({t:'jail',id})}
-function moveBy(s,id,n,ev){const p=s.pl[id],path=[];let pos=p.pos;for(let k=0;k<n;k++){pos=(pos+1)%N;path.push(pos);if(pos===0){p.cash+=200;ev.push({t:'mv',id,path:path.splice(0)},{t:'start',id})}}
+function moveBy(s,id,n,ev){const p=s.pl[id],path=[];let pos=p.pos;for(let k=0;k<n;k++){pos=(pos+1)%N;path.push(pos);if(pos===0){p.cash+=200;p.lap=(p.lap||0)+1;ev.push({t:'mv',id,path:path.splice(0)},{t:'start',id})}}
  if(path.length)ev.push({t:'mv',id,path});p.pos=pos}
 function moveTo(s,id,to,ev){const p=s.pl[id];moveBy(s,id,(to-p.pos+N)%N||N,ev)}
 function land(s,id,dice,ev,depth=0){const p=s.pl[id],i=p.pos,t=TILES[i];
- if(BUYABLE.has(t.t)){const o=s.own[i];if(!o){s.ph='buy';s.pend=i;return}
+ if(BUYABLE.has(t.t)){const o=s.own[i];if(!o){if(!p.lap){ev.push({t:'nobuy',id});return}s.ph='buy';s.pend=i;return}
   if(o.by!==id&&!s.pl[o.by].out){const a=rent(s,i,dice);ev.push({t:'rent',id,to:o.by,a,i});pay(s,id,a,o.by,ev)}
-  else if(o.by===id&&t.t==='prop'&&(o.h||0)<4&&p.cash>=lvCost(i,o.h||0)){s.ph='build';s.pend=i}return}
+  else if(o.by===id&&t.t==='prop'&&(o.h||0)<3&&p.cash>=lvCost(i,o.h||0)){s.ph='build';s.pend=i}return}
  if(t.t==='gojail')return goJail(s,id,ev);
  if((t.t==='chance'||t.t==='fund')&&depth<2){const L=CARDS[t.t],c=L[Math.floor(Math.random()*L.length)];ev.push({t:'card',d:t.t,tx:c[0],a:typeof c[1]==='number'?c[1]:c[1]==='each'?c[2]:0});
   if(typeof c[1]==='number'){if(c[1]>0)p.cash+=c[1];else pay(s,id,-c[1],null,ev)}
@@ -92,7 +93,7 @@ function act(s,id,a){
 function done(s,ev){s.seq++;s.ts=Date.now();if(s.status==='play'&&alive(s).length<2)finish(s);if(s.status==='end')ev.push({t:'end'});logEv(s,ev);return null}
 function logEv(s,ev){s.last=[...(Array.isArray(s.last)?s.last:[]),{seq:s.seq,ev}].slice(-8)}
 function startGame(s){if(s.status!=='lobby')return 'Sudah jalan';const ids=s.ord.filter(id=>s.pl[id].ch);if(ids.length<2)return 'Minimal 2 pemain yang sudah pilih bidak';
- s.ord=ids;for(const id in s.pl){if(!s.pl[id].ch){delete s.pl[id];continue}Object.assign(s.pl[id],{cash:s.set.cash,pos:0,jail:0,dbl:0,out:false})}
+ s.ord=ids;for(const id in s.pl){if(!s.pl[id].ch){delete s.pl[id];continue}Object.assign(s.pl[id],{cash:s.set.cash,pos:0,jail:0,dbl:0,lap:0,out:false})}
  Object.assign(s,{status:'play',tn:0,ph:'roll',pend:-1,own:{},rank:null,endsAt:Date.now()+s.set.min*60000,seq:s.seq+1,last:[{seq:s.seq+1,ev:[{t:'go'}]}],ts:Date.now()});return null}
 // komputer: putuskan aksi berikutnya
 function botMove(s,id){const p=s.pl[id],jago=p.lvl==='jago';
@@ -106,7 +107,7 @@ function botMove(s,id){const p=s.pl[id],jago=p.lvl==='jago';
 const $=q=>document.querySelector(q),el=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('id-ID');
-const wait=ms=>new Promise(r=>setTimeout(r,FAST?ms*.3:ms));
+const wait=ms=>SKIP?Promise.resolve():new Promise(r=>setTimeout(r,ms));
 const img=k=>`./assets/${k}.webp`;
 let toastT;function toast(t,err){const e=$('#toast');e.textContent=t;e.className='on'+(err?' err':'');clearTimeout(toastT);toastT=setTimeout(()=>e.className='',err?3200:2200)}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
@@ -124,8 +125,8 @@ let AC;function snd(type){try{AC=AC||new (window.AudioContext||window.webkitAudi
 // ===== PAPAN =====
 let BH=300;const L=$('#layer');
 // papan diatur supaya SEMUA kotak terlihat di antara panel kiri & kanan (tidak tertutup tombol)
-function fit(){const lw=$('#left').offsetWidth+10,rw=$('#right').offsetWidth+10,wa=innerWidth-lw-rw,H=innerHeight;
- BH=Math.min(H*IH/850,wa*IH/1540);document.documentElement.style.setProperty('--bh',BH+'px');const bw=BH*IW/IH;
+function fit(){const lw=0,rw=$('#right').offsetWidth+10,wa=innerWidth-lw-rw,H=innerHeight;
+ BH=Math.min(H*IH/820,wa*IH/1500);document.documentElement.style.setProperty('--bh',BH+'px');const bw=BH*IW/IH;
  camE.style.left=lw+wa/2-800/IW*bw+'px';camE.style.top=H/2-452/IH*BH+'px';camReset()}
 const pct=(x,y)=>({left:x/IW*100+'%',top:y/IH*100+'%'});
 function spot(x,y,z){const e=el('div','at');Object.assign(e.style,pct(x,y));e.style.zIndex=z??Math.round(y);L.appendChild(e);return e}
@@ -141,11 +142,12 @@ const TQ={"1": [682.4, 641.2, 764.0, 689.3, 648.4, 762.2, 569.3, 712.5], "2": [6
 function frame(){let h='';for(const k in TQ){const i=+k,t=TILES[i],q=TQ[k],[x0,y0,x1,y1,,,x3,y3]=q,W=Math.hypot(x1-x0,y1-y0),H=Math.hypot(x3-x0,y3-y0),
   inUp=i<8||i>26,bh=H*.2,ins=W*.05,top=inUp?ins:H-ins-bh,mx=W/2,cy=inUp?H*.58:H*.42,fs=Math.min(W*.25,H*.17),nm=t.n==='Pabrik Snack'?'Snack':t.n,tl=Math.min(W*.88,nm.length*fs*.6);
  h+=`<g transform="matrix(${(x1-x0)/W} ${(y1-y0)/W} ${(x3-x0)/H} ${(y3-y0)/H} ${x0} ${y0})">`;
- if(BUYABLE.has(t.t)){const c=t.t==='prop'?GC[t.g]:'#2F5FC9';
-  h+=`<rect x="${ins}" y="${top}" width="${W-ins*2}" height="${bh}" rx="${bh*.25}" fill="${c}"/><rect x="${ins}" y="${top}" width="${W-ins*2}" height="${bh*.35}" rx="${bh*.2}" fill="#fff" opacity=".25"/>`;
+ if(t.t==='air'||t.t==='util'){h+=`<rect x="${ins}" y="${ins}" width="${W-ins*2}" height="${H-ins*2}" rx="${W*.08}" fill="#DCEBFF" stroke="#7FA7E6" stroke-width="1.2"/><text class="tpz" x="${mx}" y="${inUp?H*.86:H*.2}" font-size="${fs*.8}">${t.p} YC</text>`}
+ else if(BUYABLE.has(t.t)){const c=GC[t.g];
+  h+=`<rect id="bd${i}" x="${ins}" y="${top}" width="${W-ins*2}" height="${bh}" rx="${bh*.25}" fill="${c}"/><rect x="${ins}" y="${top}" width="${W-ins*2}" height="${bh*.35}" rx="${bh*.2}" fill="#fff" opacity=".25"/>`;
   h+=`<text class="tn" x="${mx}" y="${cy-fs*.35}" font-size="${fs}" textLength="${tl}" lengthAdjust="spacingAndGlyphs">${nm}</text><text class="tpz" x="${mx}" y="${cy+fs*.85}" font-size="${fs*.8}">${t.p} YC</text>`}
  h+='</g>';
- if(t.t==='chance'||t.t==='fund'){const cx=(q[0]+q[2]+q[4]+q[6])/4,cyy=(q[1]+q[3]+q[5]+q[7])/4,z=Math.min(W,H)*.75;h+=`<image href="${img(t.k)}" x="${cx-z/2}" y="${cyy-z/2}" width="${z}" height="${z}"/>`}}
+ if(t.t==='chance'||t.t==='fund'||t.t==='air'||t.t==='util'){const sp=t.t==='air'||t.t==='util',fy=sp?(inUp?.4:.6):.5,cx=x0+(x1-x0)/2+(x3-x0)*fy,cyy=y0+(y1-y0)/2+(y3-y0)*fy,z=Math.min(W,H)*(sp?.62:.75);h+=`<image href="${img(t.k)}" x="${cx-z/2}" y="${cyy-z/2}" width="${z}" height="${z}"/>`}}
  const v=document.createElementNS('http://www.w3.org/2000/svg','svg');v.setAttribute('viewBox',`0 0 ${IW} ${IH}`);v.setAttribute('class','frame');v.innerHTML=h+`<image href="${img('tiang')}" x="457" y="164" width="152" height="75"/>`;L.appendChild(v)}
 function buildBoard(){L.innerHTML='';frame();houseEl={};ownEl={};
  TILES.forEach((t,i)=>{const [cx,cy,,,w,h]=T[i],sz=tileSize(i);
@@ -158,16 +160,20 @@ function buildBoard(){L.innerHTML='';frame();houseEl={};ownEl={};
 function showTarget(i,n){hideTarget();const [cx,cy,,,w,h]=T[i],a=spot(cx,cy,9),b=spot(cx,cy,400);a.classList.add('tg');b.classList.add('tg');
  a.innerHTML=`<i class="tr" style="width:calc(var(--bh)*${w*.62/IH});height:calc(var(--bh)*${h*.5/IH})"></i>`;b.innerHTML=`<b class="tp">${n}</b>`;tgtEl=[a,b]}
 function hideTarget(){tgtEl.forEach(e=>e.remove());tgtEl=[]}
-function renderOwn(s){for(const i in ownEl){if(!s.own[i]||s.own[i].by!==ownEl[i].by){ownEl[i].e.remove();delete ownEl[i]}}
- for(const i in houseEl){const o=s.own[i];if(!o||!o.h){houseEl[i].remove();delete houseEl[i]}}
+function renderOwn(s){for(let i=0;i<N;i++){const r=document.getElementById('bd'+i);if(r){const t=TILES[i],o=s.own[i];r.classList.toggle('full',!!(o&&groupFull(s,t.g,o.by)))}}
+for(const i in ownEl){if(!s.own[i]||s.own[i].by!==ownEl[i].by){ownEl[i].e.remove();delete ownEl[i]}}
+ for(const i in houseEl){const o=s.own[i];if(!o||o.h!==houseEl[i].h){houseEl[i].els.forEach(e=>e.remove());delete houseEl[i]}}
  for(const i in s.own){const o=s.own[i],p=s.pl[o.by];if(!p)continue;const sz=tileSize(i),w=T[i][4];
   if(!ownEl[i]){const d=el('div','own'),[ox,oy,ow]=ownPt(i);Object.assign(d.style,pct(ox,oy));d.style.cssText+=`;width:calc(var(--bh)*${ow*.22/IH});height:calc(var(--bh)*${ow*.22/IH});border-color:${CC[p.ch]};background-image:url(${img('bidak-'+p.ch)});z-index:8`;L.appendChild(d);ownEl[i]={e:d,by:o.by}}
-  if(o.h){const [bx,by,bw]=bandPt(i);let e=houseEl[i];if(!e){e=houseEl[i]=spot(bx,by,Math.round(by)+20)}const [k,ph]=lvSprite(i,o.h);setSprite(e,k,bw*[0,.36,.42,.48,.52][o.h]);e.classList.toggle('lmk',o.h===4);
-   let c=e.querySelector('.hcount');if(ph&&o.h%2===0){if(!c){c=el('div','hcount');e.appendChild(c)}c.textContent=o.h===2?'G':'★'}else c&&c.remove()}}}
+  if(o.h&&!houseEl[i]){const els=[];
+   // ala LINE Get Rich: rumah di pojok kiri, lalu gedung lebih tinggi, lalu hotel; tingkat 4 semuanya diganti landmark
+   const B=o.h>=3?[[.5,TILES[i].k,.52]]:[[.25,'rumah',.4],[.62,'hotel',.4]].slice(0,o.h);
+   for(const [fx,k,f] of B){const [bx,by,bw]=bandPt(i,fx),e=spot(bx,by,Math.round(by)+20);setSprite(e,k,bw*f);if(o.h>=3)e.classList.add('lmk');els.push(e)}
+   houseEl[i]={h:o.h,els}}}}
 // gambar bangunan; kalau gambar gedung/landmark belum ada, pakai pengganti (ph=1)
 const ASSET_OK=new Set();
 function ownPt(i){const [x0,y0,x1,y1,,,x3,y3]=TQ[i],f=i<8||i>26?.84:.16;return[x0+(x1-x0)*.84+(x3-x0)*f,y0+(y1-y0)*.84+(y3-y0)*f,Math.hypot(x1-x0,y1-y0)]}
-function bandPt(i){const [x0,y0,x1,y1,,,x3,y3]=TQ[i],f=i<8||i>26?.17:.83;return[(x0+x1)/2+(x3-x0)*f,(y0+y1)/2+(y3-y0)*f,Math.hypot(x1-x0,y1-y0)]}
+function bandPt(i,fx=.5){const [x0,y0,x1,y1,,,x3,y3]=TQ[i],f=i<8||i>26?.17:.83;return[x0+(x1-x0)*fx+(x3-x0)*f,y0+(y1-y0)*fx+(y3-y0)*f,Math.hypot(x1-x0,y1-y0)]}
 function lvSprite(i,h){if(h===4)return[TILES[i].k,0];const g=['','rumah','gedung','hotel'][h];return ASSET_OK.has(g)?[g,0]:[['','rumah','rumah','hotel'][h],1]}
 // bidak
 let pcEl={},disp={};
@@ -206,13 +212,18 @@ function flash(){const f=el('div','flash');FX.appendChild(f);setTimeout(()=>f.re
 function shake(){const g=$('#view');g.classList.remove('shake');void g.offsetWidth;g.classList.add('shake')}
 const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
 function face(d,n){d.innerHTML='';for(let k=0;k<9;k++)d.appendChild(PIPS[n].includes(k)?el('b'):el('span'))}
-async function rollDice(d,pw){const box=$('#dice'),ds=box.querySelectorAll('.die');box.classList.add('on');ds.forEach(x=>{x.classList.remove('land');x.classList.add('roll')});snd('dadu');
- const ms=600+pw*900,t0=Date.now();while(Date.now()-t0<ms){ds.forEach(x=>face(x,r6()));await wait(90)}
- ds.forEach((x,k)=>{x.classList.remove('roll');face(x,d[k]);x.classList.add('land')});snd('tuk');await wait(650)}
-const hideDice=()=>$('#dice').classList.remove('on');
+let spinT;function preSpin(){const box=$('#dice'),ds=box.querySelectorAll('.die');box.classList.add('on');setDiceName(ME);ds.forEach(x=>{x.classList.remove('land');x.classList.add('roll')});clearInterval(spinT);spinT=setInterval(()=>ds.forEach(x=>face(x,r6())),90)}
+function setDiceName(id){const box=$('#dice'),p=S.pl[id];let n=box.querySelector('.dname');if(!n){n=el('div','dname');box.appendChild(n)}n.textContent=id===ME?'Dadumu':'Dadu '+p.nm;n.style.background=CC[p.ch]||'#2F5FC9'}
+async function rollDice(d,pw,id){clearInterval(spinT);const box=$('#dice'),ds=box.querySelectorAll('.die');box.classList.add('on');setDiceName(id);ds.forEach(x=>{x.classList.remove('land');x.classList.add('roll')});snd('dadu');
+ const ms=SKIP?0:350+pw*350,t0=Date.now();while(!SKIP&&Date.now()-t0<ms){ds.forEach(x=>face(x,r6()));await wait(90)}
+ ds.forEach((x,k)=>{x.classList.remove('roll');face(x,d[k]);x.classList.add('land')});snd('tuk');await wait(500)}
+const hideDice=()=>{clearInterval(spinT);$('#dice').classList.remove('on')};
 
 // ===== KEADAAN APLIKASI =====
-let FAST=false,backlog=0;
+let SKIP=false,GEN=0,lastTurn=null;
+// sebelum memutar aksi terbaru: semua bidak langsung ke posisi terakhir, kecuali yang sedang jalan (mulai dari titik awalnya)
+function prep(ev){for(const id of S.ord)if(S.pl[id])disp[id]=S.pl[id].pos;const seen={};for(const e of ev)if(e.t==='mv'&&!e.jump&&!seen[e.id]){seen[e.id]=1;disp[e.id]=(e.path[0]-1+N)%N}renderPieces(S)}
+function turnCall(){if(!S||S.status!=='play'||animating)return;const id=cur(S);if(id===lastTurn)return;lastTurn=id;banner(id===ME?'Giliranmu!':`Giliran ${S.pl[id].nm}`)}
 let S=null,ME=null,MODE=null,shownSeq=0,animating=false,queue=Promise.resolve(),net=null,unsub=null,roomCode='';
 const nameOf=id=>S.pl[id]?.nm||'Pemain';
 
@@ -221,25 +232,26 @@ function onState(s){const prev=S;S=s;
  if(s.status==='lobby'){shownSeq=s.seq;disp={};return renderLobby()}
  if(!$('#game').classList.contains('on')){show('game');buildBoard();fit();disp={};for(const id of s.ord)disp[id]=s.pl[id].pos;shownSeq=s.seq;renderAll();tick();bot();return}
  const L=Array.isArray(s.last)?s.last:s.last?[s.last]:[],nw=L.filter(x=>x.seq>shownSeq);
- if(nw.length){if(nw[0].seq>shownSeq+1&&shownSeq)toast('Menyusul permainan…');shownSeq=nw[nw.length-1].seq;
-  for(const x of nw){backlog++;queue=queue.then(()=>{FAST=backlog>1;return play(x.ev)}).then(()=>backlog--)}queue=queue.then(()=>{FAST=false;renderAll();bot()})}
+ if(nw.length){shownSeq=nw[nw.length-1].seq;const ev=nw[nw.length-1].ev,g=++GEN;if(animating)SKIP=true;
+  queue=queue.then(()=>{if(g!==GEN)return;SKIP=false;prep(ev);return play(ev)}).then(()=>{if(g!==GEN)return;renderAll();bot();turnCall()})}
  else if(!animating)renderAll()}
 async function play(ev){animating=true;renderCtrl();
  try{for(const [k,e] of ev.entries()){const p=S.pl[e.id];
   switch(e.t){
-  case 'roll':{await rollDice(e.d,e.pw);const m=ev.slice(k+1).find(x=>x.t==='mv'&&x.id===e.id);if(m){const t=m.path[m.path.length-1];showTarget(t,e.d[0]+e.d[1]);camFocus(T[t][0],T[t][1],1.3);await wait(1100)}break}
+  case 'roll':{await rollDice(e.d,e.pw,e.id);if(e.d[0]===e.d[1]&&!ev.some(x=>x.t==='free'||x.t==='jail'))banner('Dadu kembar! Main sekali lagi');const m=ev.slice(k+1).find(x=>x.t==='mv'&&x.id===e.id);if(m){const t=m.path[m.path.length-1];showTarget(t,e.d[0]+e.d[1]);camFocus(T[t][0],T[t][1],1.3);await wait(650)}break}
   case 'mv':{hideDice();const t=e.path[e.path.length-1];camFocus(T[t][0],T[t][1],1.5);
-   for(const pos of e.path){disp[e.id]=pos;const pc=pcEl[e.id];placePiece(S,e.id,pos,e.jump?'kaget':'senang');if(pc){pc.classList.remove('hop');void pc.offsetWidth;pc.classList.add('hop')}snd('tuk');await wait(e.jump?420:260)}
+   for(const pos of e.path){disp[e.id]=pos;const pc=pcEl[e.id];placePiece(S,e.id,pos,e.jump?'kaget':'senang');if(pc){pc.classList.remove('hop');void pc.offsetWidth;pc.classList.add('hop')}snd('tuk');await wait(e.jump?380:200)}
    hideTarget();placePiece(S,e.id,disp[e.id]);await wait(150);break}
   case 'start':snd('koin');coins(10);banner(`${nameOf(e.id)} +200 YC`);await wait(700);break;
   case 'rent':snd('aduh');expr(S,e.id,'kaget',1800);expr(S,e.to,'sombong',1800);banner(`Bayar sewa ${fmt(e.a)} YC`,1);await wait(1500);break;
   case 'card':snd('kartu');await cardPop(e);break;
   case 'jail':disp[e.id]=JAIL;hideDice();snd('sirene');flash();banner('MASUK PENJARA!',1);camFocus(T[JAIL][0],T[JAIL][1],1.5);renderPieces(S);expr(S,e.id,'nangis',2200);await wait(1800);break;
   case 'stay':hideDice();banner('Belum bebas dari penjara',1);expr(S,e.id,'nangis');await wait(1100);break;
+  case 'nobuy':banner('Putaran pertama: belum bisa beli');await wait(900);break;
   case 'free':banner('Bebas dari penjara!');expr(S,e.id,'senang');await wait(900);break;
   case 'buy':snd('ting');coins(12);banner(`${TILES[e.i].n} jadi milik ${nameOf(e.id)}!`);expr(S,e.id,'senang');await wait(1200);break;
   case 'pass':hideDice();break;
-  case 'build':snd('bangun');banner(['','Rumah baru!','Gedung berdiri!','Hotel berdiri!','Landmark jadi!'][e.h]);if(e.h>3)coins(14);renderOwn(S);await wait(e.h>3?1500:900);break;
+  case 'build':snd('bangun');banner(['','Rumah baru!','Gedung berdiri!','Landmark jadi!'][e.h]);if(e.h>2)coins(14);renderOwn(S);await wait(e.h>2?1500:900);break;
   case 'mono':snd('yey');coins(30);banner(`${nameOf(e.id)} menang! ${e.w==='line'?'Satu deret dikuasai':'3 warna lengkap'}`);await wait(2200);break;
   case 'sell':banner(`${nameOf(e.id)} jual aset buat bayar`,1);await wait(1100);break;
   case 'bank':snd('boom');shake();flash();banner(`${nameOf(e.id)} BANGKRUT!`,1);expr(S,e.id,'nangis',2500);await wait(2000);break;
@@ -264,7 +276,7 @@ function renderCtrl(){const c=$('#ctrl');clearInterval(powT);c.innerHTML='';clos
 
  const bar=el('div','power','<i></i>'),i=bar.firstChild,btn=el('button','btn y btnStop','STOP!');let v=0,dir=1;
  powT=setInterval(()=>{v+=dir*4;if(v>=100||v<=0)dir*=-1;i.style.width=v+'%'},30);
- btn.onclick=()=>{clearInterval(powT);busy(btn,null,()=>send({k:'roll',pw:v/100}))};
+ btn.onclick=()=>{clearInterval(powT);preSpin();busy(btn,null,()=>send({k:'roll',pw:v/100}).catch(e=>{clearInterval(spinT);hideDice();throw e}))};
  const hint=el('div','panel wait',p.jail?(p.jail>=2?'Giliran ini kamu bebas dari penjara':'Di penjara: dadu kembar = bebas, kalau tidak tunggu 1 giliran'):'Giliranmu! Tekan STOP');c.append(hint,bar,btn)}
 
 // ===== KARTU & JENDELA =====
@@ -272,7 +284,7 @@ function openModal(html,tag){const m=$('#modal'),b=$('#mbox');b.innerHTML=html;b
 function closeModal(tag){const m=$('#modal');if(!tag||$('#mbox').dataset.tag===tag)m.classList.remove('on')}
 $('#modal').onclick=e=>{if(e.target.id==='modal'&&$('#mbox').dataset.tag!=='buy')closeModal()};
 function tileInfo(i){const t=TILES[i],o=S?.own?.[i];let rows='';
- if(t.t==='prop'){const r=rentBase(t.p);rows=`<table class="tbl"><tr><td>Sewa tanah</td><td>${r} YC</td></tr><tr><td>Satu warna lengkap</td><td>${r*2} YC</td></tr>${[1,2,3,4].map(h=>`<tr><td>${LVN[h]} (${lvCost(i,h-1)} YC)</td><td>${fmt(r*RM[h])} YC</td></tr>`).join('')}</table>`}
+ if(t.t==='prop'){const r=rentBase(t.p);rows=`<table class="tbl"><tr><td>Sewa tanah</td><td>${r} YC</td></tr>${[1,2,3].map(h=>`<tr><td>${LVN[h]} (${lvCost(i,h-1)} YC)</td><td>${fmt(r*RM[h])} YC</td></tr>`).join('')}<tr><td colspan="2">Satu warna lengkap: semua sewa x2</td></tr></table>`}
  else if(t.t==='air')rows='<p>Sewa 50 YC, kalau punya 2 bandara jadi 100 YC</p>';else if(t.t==='util')rows='<p>Sewa = angka dadu × 4, kalau punya Wifi & Pabrik Snack jadi × 10</p>';
  else rows={start:'<p>Lewat sini dapat 200 YC</p>',jail:'<p>Cuma mampir, aman</p>',rest:'<p>Santai dulu, tidak terjadi apa-apa</p>',gojail:'<p>Berhenti di sini = masuk penjara!</p>',chance:'<p>Ambil kartu Kesempatan</p>',fund:'<p>Ambil kartu Dana Umum</p>'}[t.t];
  const own=o&&S.pl[o.by]?`<p>Milik <b>${esc(S.pl[o.by].nm)}</b>${o.h?` · ${LVN[o.h].toLowerCase()}`:''}</p>`:t.p?`<p>Harga ${t.p} YC · belum ada pemiliknya</p>`:'';
@@ -281,7 +293,7 @@ function buyCard(){const i=S.pend,t=TILES[i],p=S.pl[ME],ok=p.cash>=t.p;expr(S,ME
  const b=openModal(`<div class="mhead" style="background:linear-gradient(180deg,#3FA36E,#2A7D52)">VISA DISETUJUI</div><img class="stamp" src="${img('cap')}" alt=""><div class="mbody"><img class="big" src="${img(t.k)}" alt=""><h3>${esc(t.n)}</h3><p>Harga ${t.p} YC · Yep Coin-mu ${fmt(p.cash)} YC</p>${ok?'':'<p><b>Yep Coin-mu belum cukup</b></p>'}<div class="row"><button class="btn b" id="bNo">Lewati</button><button class="btn y" id="bYes"${ok?'':' disabled'}>Beli Tanah!</button></div></div>`,'buy');
  b.querySelector('#bYes').onclick=e=>busy(e.target,'Sedang membeli tanah…',()=>send({k:'buy',y:true}));b.querySelector('#bNo').onclick=e=>busy(e.target,null,()=>send({k:'buy',y:false}))}
 function buildCard(){const i=S.pend,t=TILES[i],h=S.own[i].h||0,c=lvCost(i,h),p=S.pl[ME],ok=p.cash>=c;expr(S,ME,'mikir',60000);
- const b=openModal(`<div class="mhead" style="background:linear-gradient(180deg,#3FA36E,#2A7D52)">BANGUN</div><div class="mbody"><img class="big" src="${img(t.k)}" alt=""><h3>${esc(t.n)}</h3><p>${LVN[h]} → <b>${LVN[h+1]}</b> · ${c} YC</p><p>Sewa jadi ${fmt(rentBase(t.p)*RM[h+1])} YC · Yep Coin-mu ${fmt(p.cash)} YC</p><div class="row"><button class="btn b" id="bNo">Lewati</button><button class="btn y" id="bYes"${ok?'':' disabled'}>Bangun ${LVN[h+1]}!</button></div></div>`,'buy');
+ const b=openModal(`<div class="mhead" style="background:linear-gradient(180deg,#3FA36E,#2A7D52)">BANGUN</div><div class="mbody"><img class="big" src="${img(t.k)}" alt=""><h3>${esc(t.n)}</h3><p>${LVN[h]} → <b>${LVN[h+1]}</b> · ${c} YC</p><p>Sewa jadi ${fmt(rentBase(t.p)*RM[h+1]*(groupFull(S,t.g,ME)?2:1))} YC · Yep Coin-mu ${fmt(p.cash)} YC</p><div class="row"><button class="btn b" id="bNo">Lewati</button><button class="btn y" id="bYes"${ok?'':' disabled'}>Bangun ${LVN[h+1]}!</button></div></div>`,'buy');
  b.querySelector('#bYes').onclick=e=>busy(e.target,'Sedang membangun…',()=>send({k:'build',y:true}));b.querySelector('#bNo').onclick=e=>busy(e.target,null,()=>send({k:'build',y:false}))}
 async function cardPop(e){const ch=e.d==='chance';openModal(`<div class="mhead" style="background:${ch?'#E0664F':'#1C2B4D'}">${ch?'KESEMPATAN':'DANA UMUM'}</div><div class="mbody"><img class="big" src="${img(ch?'kartu-kesempatan':'kartu-dana')}" alt=""><p style="font-size:17px;color:#2A2010"><b>${esc(e.tx)}</b></p>${e.a?`<h3>${e.a>0?'+':''}${e.a} YC</h3>`:''}</div>`,'card');
  if(e.a>0)coins(8);await wait(2600);closeModal('card')}
@@ -311,7 +323,7 @@ async function fbInit(){if(net)return net;if(!CONFIG.firebase.apiKey)throw fail(
  const app=ap.initializeApp(CONFIG.firebase),auth=au.getAuth(app),db=fs.getFirestore(app);const cred=await au.signInAnonymously(auth);
  return net={fs,db,uid:cred.user.uid}}
 const roomRef=c=>net.fs.doc(net.db,'rooms',c);
-async function tx(fn){return net.fs.runTransaction(net.db,async t=>{const snap=await t.get(roomRef(roomCode));if(!snap.exists())throw fail('Room tidak ditemukan');const s=snap.data();const r=fn(s);if(r)throw fail(r);t.set(roomRef(roomCode),s)})}
+async function tx(fn){return net.fs.runTransaction(net.db,async t=>{const snap=await t.get(roomRef(roomCode));if(!snap.exists())throw fail('Room tidak ditemukan');const s=snap.data();if((s.v||1)!==VER)throw fail(s.v>VER?'Aplikasimu versi lama. Tutup lalu buka lagi aplikasinya.':'Room ini dibuat aplikasi versi lama. Buat room baru.');const r=fn(s);if(r)throw fail(r);t.set(roomRef(roomCode),s)})}
 function listen(){unsub&&unsub();unsub=net.fs.onSnapshot(roomRef(roomCode),snap=>{if(!snap.exists()){toast('Room sudah tidak ada',1);return leave()}onState(snap.data())},e=>{console.error(e);toast('Koneksi terputus, mencoba lagi…',1)})}
 async function createRoom(){await fbInit();MODE='online';ME=net.uid;
  for(let k=0;k<6;k++){const c=String(1000+Math.floor(Math.random()*9000));
@@ -349,6 +361,7 @@ function myName(){return($('#nama').value.trim().replace(/[<>]/g,'')||'Pemain').
 function leave(){unsub&&unsub();unsub=null;clearTimeout(botT);closeModal();S=null;MODE=null;roomCode='';pcEl={};disp={};show('home')}
 $('#bMenu').onclick=()=>{const b=openModal(`<div class="mhead" style="background:#2F5FC9">MENU</div><div class="mbody"><p>${MODE==='online'?'Kode room: <b>'+roomCode+'</b>':'Main sendiri'}</p><div class="row"><button class="btn b sm" id="m1">Lanjut main</button><button class="btn r sm" id="m2">Keluar</button></div><p class="small">${MODE==='online'?'Kalau keluar, bidakmu tetap di papan dan giliranmu bisa dilewati pembuat room.':'Kalau keluar, permainan ini hilang.'}</p></div>`);b.querySelector('#m1').onclick=()=>closeModal();b.querySelector('#m2').onclick=leave};
 $('#bReset').onclick=camReset;
+addEventListener('pointerdown',()=>{const d=document.documentElement;if(!document.fullscreenElement&&d.requestFullscreen)d.requestFullscreen({navigationUI:'hide'}).then(()=>screen.orientation?.lock?.('landscape')).catch(()=>{})},{once:false});
 const needName=()=>{if(!$('#nama').value.trim()){toast('Tulis namamu dulu ya',1);$('#nama').focus();return true}try{localStorage.setItem('yt-nama',myName())}catch(e){}};
 $('#bSendiri').onclick=()=>{if(!needName())solo()};
 $('#bBareng').onclick=e=>{if(!needName())busy(e.currentTarget,'Sedang membuat room…',createRoom)};
